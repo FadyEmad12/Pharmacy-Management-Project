@@ -5,7 +5,7 @@ The system supports medicine browsing, sales management, inventory control, and 
 
 This project is developed using:
 
-Frontend: HTML5, CSS3, JavaScript
+Frontend: HTML, CSS, JavaScript
 
 Backend: ASP.NET
 
