@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using Pharmacy.Models;
+
 namespace Pharmacy.Repository
 {
     public interface IDrugRepository
@@ -9,7 +9,8 @@ namespace Pharmacy.Repository
         Drug? GetById(int id);
         Drug? GetByBarcode(string barcode);
         List<Drug> SearchByName(string name);
-        void Add(Drug drug);
+        Drug Add(Drug drug);
+        void Save();
         void Update(Drug drug);
         void Delete(int id);
     }

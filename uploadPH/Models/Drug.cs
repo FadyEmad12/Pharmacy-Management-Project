@@ -1,30 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema; // <-- ADD THIS USING
 
 namespace Pharmacy.Models;
 
-[Table("drugs")]
-[Index("IsLow", Name = "IX_drugs_is_low")]
-[Index("Barcode", Name = "UQ__drugs__C16E36F83291922D", IsUnique = true)]
 public partial class Drug
 {
-    [Key]
+    // PRIMARY KEY: Explicitly map C# property to SQL column
     [Column("drug_id")]
     public int DrugId { get; set; }
 
     [Column("name")]
-    [StringLength(255)]
     public string Name { get; set; } = null!;
 
-    [Column("price", TypeName = "decimal(18, 2)")]
-    public decimal Price { get; set; }
+    // Using TypeName for decimal properties is safest
+    [Column("selling_price", TypeName = "decimal(18, 2)")]
+    public decimal SellingPrice { get; set; }
+
+    [Column("purchasing_price", TypeName = "decimal(18, 2)")]
+    public decimal PurchasingPrice { get; set; }
 
     [Column("barcode")]
-    [StringLength(255)]
     public string? Barcode { get; set; }
+
+    [Column("image_url")]
+    public string? ImageUrl { get; set; }
+
+    [Column("description_before_use")]
+    public string? DescriptionBeforeUse { get; set; }
+
+    [Column("description_how_to_use")]
+    public string? DescriptionHowToUse { get; set; }
+
+    [Column("description_side_effects")]
+    public string? DescriptionSideEffects { get; set; }
+
+    [Column("requires_prescription")]
+    public bool RequiresPrescription { get; set; }
+
+    [Column("drug_type")]
+    public string DrugType { get; set; } = null!;
+
+    [Column("manufacturer")]
+    public string? Manufacturer { get; set; }
+
+    [Column("expiration_date")]
+    public DateOnly? ExpirationDate { get; set; }
 
     [Column("shelf_amount")]
     public int ShelfAmount { get; set; }
@@ -32,32 +53,25 @@ public partial class Drug
     [Column("stored_amount")]
     public int StoredAmount { get; set; }
 
-    [Column("type_quantity")]
-    [StringLength(10)]
-    public string TypeQuantity { get; set; } = null!;
+    [Column("low_amount")]
+    public int LowAmount { get; set; }
 
-    [Column("amount_per_sub")]
-    public int AmountPerSub { get; set; }
-
-    [Column("amount_per_sub_left")]
-    public int AmountPerSubLeft { get; set; }
-
-    [Column("low_threshold")]
-    public int LowThreshold { get; set; }
+    [Column("sub_amount_quantity")]
+    public int SubAmountQuantity { get; set; }
 
     [Column("created_at")]
     public DateTime CreatedAt { get; set; }
 
-    [Column("total_in_sub")]
-    public int? TotalInSub { get; set; }
 
-    [Column("is_low")]
-    public bool? IsLow { get; set; }
+    // NAVIGATION PROPERTIES (Relationships)
 
-    [InverseProperty("Drug")]
+    // One-to-Many
     public virtual ICollection<InvoiceItem> InvoiceItems { get; set; } = new List<InvoiceItem>();
 
-    [ForeignKey("DrugId")]
-    [InverseProperty("Drugs")]
-    public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
+    // DELETE THIS LINE! This is the old, confusing, implicit M:N property.
+    // public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
+
+
+    // KEEP THIS LINE: This is the correct, explicit M:N property using the join entity.
+    public virtual ICollection<DrugTag> DrugTags { get; set; } = new List<DrugTag>();
 }

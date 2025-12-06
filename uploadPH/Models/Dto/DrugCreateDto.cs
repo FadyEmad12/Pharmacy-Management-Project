@@ -1,34 +1,29 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Pharmacy.Models.Dto
+namespace Pharmacy.Dtos
 {
     public class DrugCreateDto
     {
-        [Required]
-        public string Name { get; set; }
-
-        [Range(0.01, double.MaxValue)]
-        public decimal Price { get; set; }
-
-        public string Barcode { get; set; }
-
-        [Range(0, int.MaxValue)]
+        // All core drug properties from the HTML form
+        public string Name { get; set; } = null!;
+        public decimal SellingPrice { get; set; }
+        public decimal PurchasingPrice { get; set; }
+        public string? Barcode { get; set; }
+        
+        // This receives the uploaded file content
+        public IFormFile Image { get; set; } = null!; // IMPORTANT: Changed to be NOT nullable based on your validation
+        
+        public string? DescriptionBeforeUse { get; set; }
+        public string? DescriptionHowToUse { get; set; }
+        public string? DescriptionSideEffects { get; set; }
+        public bool RequiresPrescription { get; set; }
+        public string DrugType { get; set; } = null!;
+        public string? Manufacturer { get; set; }
+        public DateOnly? ExpirationDate { get; set; }
         public int ShelfAmount { get; set; }
-
-        [Range(0, int.MaxValue)]
         public int StoredAmount { get; set; }
+        public int LowAmount { get; set; }
+        public int SubAmountQuantity { get; set; }
 
-        [Required]
-        [RegularExpression("whole|sub")]
-        public string TypeQuantity { get; set; }
-
-        [Range(1, int.MaxValue)]
-        public int AmountPerSub { get; set; }
-
-        [Range(0, int.MaxValue)]
-        public int AmountPerSubLeft { get; set; }
-
-        [Range(1, int.MaxValue)]
-        public int LowThreshold { get; set; }
+        // New property to receive a list of tag names from the form/request body
+        public List<string> Tags { get; set; } = new(); 
     }
 }

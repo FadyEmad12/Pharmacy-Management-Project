@@ -1,0 +1,162 @@
+those need to be done!
+
+i have not finished the code for the admin and i just need to push before keep going
+
+
+**********
+GET /drugs/search
+Access: admin, cashier
+
+//if you want to add extra params that will be up to you
+GET /drugs/search?name=&barcode=&type=&tags=
+
+{
+  "success": true,
+  "count": 1,
+  "data": [
+    {
+      "drug_id": 1,
+      "name": "Panadol Extra",
+      "selling_price": 25.50,
+      "barcode": "012345",
+      "drug_type": "tablet",
+      "manufacturer": "GSK",
+      "expiration_date": "2026-08-10",
+      "shelf_amount": 20,
+      "stored_amount": 100,
+      "sub_amount_quantity": 10,
+      "tags": ["fever", "pain"]
+      "is_low":1
+    }
+  ]
+}
+
+not found
+{
+  "success": true,
+  "count": 0,
+  "data": []
+}
+
+******
+
+GET /drugs/generate-barcode
+Access: admin, cashier
+// you must make sure that this barcode is not in the database 
+{
+  "success": true,
+  "barcode": "028415937201"
+}
+
+*******
+
+/*/*/*/*/*/*/*/*/*/*/*//*/**/*//**/
+admin && logs
+
+POST /admins
+Access: super_admin only
+
+
+Request
+{
+  "username": "mohamed",
+  "email": "mohamed@example.com",
+  "password": "StrongPassword123",
+  "role": "cashier"
+}
+
+Response
+{
+  "success": true,
+  "message": "User created successfully.",
+  "admin": {
+    "admin_id": 12,
+    "username": "mohamed",
+    "email": "mohamed@example.com",
+    "role": "cashier",
+    "created_at": "2025-02-14T10:20:00Z"
+  }
+}
+
+***********
+PUT /admins/{id}
+Access: super_admin only
+
+Request
+{
+  "username": "newName",
+  "email": "newEmail@example.com",
+  "role": "super_admin"
+}
+
+Response
+{
+  "success": true,
+  "message": "User updated successfully.",
+  "admin": {
+    "admin_id": 12,
+    "username": "newName",
+    "email": "newEmail@example.com",
+    "role": "super_admin"
+  }
+}
+
+*******
+
+DELETE /admins/{id}
+Access: super_admin only
+
+{
+  "success": true,
+  "message": "User deleted successfully."
+}
+
+********
+
+GET /admins
+Access: super_admin only
+
+{
+  "success": true,
+  "count": 3,
+  "admins": [
+    {
+      "admin_id": 1,
+      "username": "owner",
+      "email": "owner@pharma.com",
+      "role": "super_admin",
+      "created_at": "2025-02-14T10:00:00Z"
+    }
+  ]
+}
+
+
+****************
+GET /admin-logs?page=1&limit=20
+Access: super_admin only
+
+
+{
+  "success": true,
+  "page": 1,
+  "limit": 20,
+  "total_logs": 1285,
+  "logs": [
+    {
+      "log_id": 120,
+      "admin_id": 3,
+      "username": "mohamed",
+      "action_type": "login",
+      "action_time": "2025-02-15T11:30:55Z"
+    },
+    {
+      "log_id": 121,
+      "admin_id": 3,
+      "username": "mohamed",
+      "action_type": "logout",
+      "action_time": "2025-02-15T12:05:42Z"
+    }
+  ]
+}
+so far we have just created the drugs and we are missing the search 
+we are also in need of creating the auth system and also the admin roles and so on we are in need of creating more tasks and giving them out to to other team members okay we have now to things to work on either create the admin controller or we create more tasks for the team to work on parller i think the best thing to do is we create more endponits so that we can handle everything what do you think?

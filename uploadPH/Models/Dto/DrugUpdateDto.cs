@@ -1,18 +1,41 @@
-﻿using System.ComponentModel.DataAnnotations;
+// In Pharmacy.Dtos/DrugUpdateDto.cs
 
-namespace Pharmacy.Models.Dto
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Pharmacy.Dtos
 {
     public class DrugUpdateDto
     {
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public string Barcode { get; set; }
+        [Required]
+        public string Name { get; set; } = null!;
+        
+        [Required]
+        public decimal SellingPrice { get; set; }
+        
+        [Required]
+        public decimal PurchasingPrice { get; set; }
+        
+        public string? Barcode { get; set; }
+        
+        public string? DescriptionBeforeUse { get; set; }
+        public string? DescriptionHowToUse { get; set; }
+        public string? DescriptionSideEffects { get; set; }
+        
+        public bool RequiresPrescription { get; set; }
+        
+        [Required]
+        public string DrugType { get; set; } = null!;
+        
+        public string? Manufacturer { get; set; }
+        public DateOnly? ExpirationDate { get; set; }
+        
         public int ShelfAmount { get; set; }
         public int StoredAmount { get; set; }
-        [RegularExpression("whole|sub")]
-        public string TypeQuantity { get; set; }
-        public int AmountPerSub { get; set; }
-        public int AmountPerSubLeft { get; set; }
-        public int LowThreshold { get; set; }
+        public int LowAmount { get; set; }
+        public int SubAmountQuantity { get; set; }
+
+        public List<string>? Tags { get; set; }
     }
 }
