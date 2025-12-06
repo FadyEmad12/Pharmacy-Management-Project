@@ -1,5 +1,5 @@
 // In Pharmacy.Repository/AdminRepository.cs
-
+ //
 using Pharmacy.Data;
 using Pharmacy.Models;
 using Microsoft.EntityFrameworkCore;
