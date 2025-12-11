@@ -6,14 +6,12 @@ namespace Pharmacy.Models;
 
 public partial class Drug
 {
-    // PRIMARY KEY: Explicitly map C# property to SQL column
     [Column("drug_id")]
     public int DrugId { get; set; }
 
     [Column("name")]
     public string Name { get; set; } = null!;
 
-    // Using TypeName for decimal properties is safest
     [Column("selling_price", TypeName = "decimal(18, 2)")]
     public decimal SellingPrice { get; set; }
 

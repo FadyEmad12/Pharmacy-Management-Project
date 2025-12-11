@@ -15,16 +15,15 @@ namespace Pharmacy.Controllers
     {
         private readonly IDrugRepository _drugRepo;
         private readonly ITagRepository _tagRepo;
-        private readonly PharmacyDbContext _context; // FIXED: Added missing field
+        private readonly PharmacyDbContext _context; 
 
         public DrugsController(IDrugRepository drugRepo, ITagRepository tagRepo, PharmacyDbContext context)
         {
             _drugRepo = drugRepo;
             _tagRepo = tagRepo;
-            _context = context; // FIXED: Initialized field
+            _context = context; 
         }
 
-        // --- HELPER METHOD FOR CONSISTENCY ---
         private string? ValidateDrugLogic(string drugType, DateOnly? expirationDate)
         {
             var allowedTypes = new[]
@@ -36,15 +35,14 @@ namespace Pharmacy.Controllers
             if (expirationDate.HasValue && expirationDate <= DateOnly.FromDateTime(DateTime.Today))
                 return "Expiration date must be after today.";
 
-            return null; // No errors
+            return null; 
         }
-        // -------------------------------------
 
         private DrugDto MapToDto(Drug d)
         {
             int totalAmount = d.ShelfAmount + d.StoredAmount;
 
-            // Handle potential null Tags list if DTO is mapped from a query without Includes
+
             var tagNames = d.DrugTags != null 
                 ? d.DrugTags.Select(dt => dt.Tag.Name).ToList() 
                 : new List<string>();
@@ -111,7 +109,7 @@ namespace Pharmacy.Controllers
         }
 
         [HttpDelete("{id}")]
-       // [Authorize(Roles = "admin")]
+        [Authorize(Roles = "super_admin")]
         public IActionResult DeleteDrug(int id)
         {
             var drug = _drugRepo.GetById(id);
@@ -135,39 +133,42 @@ namespace Pharmacy.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "super_admin")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> CreateDrug([FromForm] DrugCreateDto dto)
         {
-            // 1. Consistent Validation Logic
             string? validationError = ValidateDrugLogic(dto.DrugType, dto.ExpirationDate);
             if (validationError != null)
                 return BadRequest(validationError);
 
-            // 2. Image Validation (Specific to Create)
-            if (dto.Image == null || dto.Image.Length == 0)
-                return BadRequest("Image is required.");
+            string? fileName = null;
 
-            // 3. Save Image
-            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-            if (!Directory.Exists(uploadsPath))
-                Directory.CreateDirectory(uploadsPath);
-
-            var fileName = $"{Guid.NewGuid()}_{dto.Image.FileName}";
-            var filePath = Path.Combine(uploadsPath, fileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            // Handle image only if provided
+            if (dto.Image != null && dto.Image.Length > 0)
             {
-                await dto.Image.CopyToAsync(stream);
+                var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                if (!Directory.Exists(uploadsPath))
+                    Directory.CreateDirectory(uploadsPath);
+
+                fileName = $"{Guid.NewGuid()}_{dto.Image.FileName}";
+                var filePath = Path.Combine(uploadsPath, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await dto.Image.CopyToAsync(stream);
+                }
             }
 
-            // 4. Map DTO to Entity
             var drug = new Drug
             {
                 Name = dto.Name,
                 SellingPrice = dto.SellingPrice,
                 PurchasingPrice = dto.PurchasingPrice,
                 Barcode = dto.Barcode,
-                ImageUrl = "/uploads/" + fileName,
+
+                // ❗ If no image uploaded, ImageUrl becomes null
+                ImageUrl = fileName != null ? "/uploads/" + fileName : null,
+
                 DescriptionBeforeUse = dto.DescriptionBeforeUse,
                 DescriptionHowToUse = dto.DescriptionHowToUse,
                 DescriptionSideEffects = dto.DescriptionSideEffects,
@@ -183,7 +184,7 @@ namespace Pharmacy.Controllers
                 DrugTags = new List<DrugTag>()
             };
 
-            // 5. Handle Tags
+            // --------- TAG LOGIC (unchanged) ----------
             if (dto.Tags != null && dto.Tags.Any())
             {
                 var tagNames = dto.Tags.Distinct().Select(n => n.ToLower()).ToList();
@@ -194,7 +195,7 @@ namespace Pharmacy.Controllers
                 var newTags = newTagNames.Select(name => new Tag { Name = name }).ToList();
 
                 _tagRepo.AddRange(newTags);
-                await _tagRepo.SaveAsync(); // Save TAGS (Async allowed here)
+                await _tagRepo.SaveAsync();
 
                 var allTags = existingTags.Concat(newTags);
 
@@ -204,43 +205,43 @@ namespace Pharmacy.Controllers
                 }
             }
 
-            // 6. Save Drug
             _drugRepo.Add(drug);
-            _drugRepo.Save(); // FIXED: Removed await (Sync method)
+            _drugRepo.Save();
 
             return Ok(new { message = "Drug created successfully", drugId = drug.DrugId });
         }
 
+
         [HttpPut("{id}")]
-       // [Authorize(Roles = "admin")]
+        [Authorize(Roles = "super_admin")]
         public async Task<IActionResult> UpdateDrug(int id, [FromBody] DrugUpdateDto dto)
         {
-            // 1. Consistent Validation Logic
             string? validationError = ValidateDrugLogic(dto.DrugType, dto.ExpirationDate);
             if (validationError != null)
                 return BadRequest(validationError);
 
-            // 2. Fetch existing drug (No Tracking)
             var existingDrug = await _context.Drugs
                 .AsNoTracking()
-                .Where(d => d.DrugId == id)
                 .Include(d => d.DrugTags)
-                .ThenInclude(dt => dt.Tag)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(d => d.DrugId == id);
 
             if (existingDrug == null)
-            {
                 return NotFound(new { success = false, error = $"Drug with ID {id} not found." });
-            }
 
-            // 3. Map DTO to Entity (Full Replacement)
+            // Prevent duplicate barcode
+            var duplicateBarcode = await _context.Drugs
+                .AnyAsync(d => d.Barcode == dto.Barcode && d.DrugId != id);
+
+            if (duplicateBarcode)
+                return Conflict("A drug with this barcode already exists.");
+
             var updatedDrug = new Drug
             {
                 DrugId = id,
-                Name = dto.Name,
+                Name = dto.Name ?? existingDrug.Name,
                 SellingPrice = dto.SellingPrice,
                 PurchasingPrice = dto.PurchasingPrice,
-                Barcode = dto.Barcode,
+                Barcode = dto.Barcode ?? existingDrug.Barcode,
                 DrugType = dto.DrugType,
                 ExpirationDate = dto.ExpirationDate,
                 ShelfAmount = dto.ShelfAmount,
@@ -248,7 +249,6 @@ namespace Pharmacy.Controllers
                 SubAmountQuantity = dto.SubAmountQuantity,
                 LowAmount = dto.LowAmount,
 
-                // Preserve non-updated fields
                 ImageUrl = existingDrug.ImageUrl,
                 CreatedAt = existingDrug.CreatedAt,
                 DescriptionBeforeUse = existingDrug.DescriptionBeforeUse,
@@ -260,39 +260,37 @@ namespace Pharmacy.Controllers
                 DrugTags = new List<DrugTag>()
             };
 
-            // 4. Handle Tags
             if (dto.Tags != null && dto.Tags.Any())
             {
-                var tagNames = dto.Tags.Distinct().Select(n => n.ToLower()).ToList();
-                List<Tag> existingTags = await _tagRepo.GetTagsByNamesAsync(tagNames);
+                var tagNames = dto.Tags
+                    .Distinct()
+                    .Select(n => n.ToLower())
+                    .ToList();
 
-                var existingTagNames = existingTags.Select(t => t.Name.ToLower()).ToList();
-                var newTagNames = tagNames.Except(existingTagNames, StringComparer.OrdinalIgnoreCase).ToList();
+                var existingTags = await _tagRepo.GetTagsByNamesAsync(tagNames);
+
+                var newTagNames = tagNames
+                    .Except(existingTags.Select(t => t.Name.ToLower()))
+                    .ToList();
+
                 var newTags = newTagNames.Select(name => new Tag { Name = name }).ToList();
-
                 _tagRepo.AddRange(newTags);
-                await _tagRepo.SaveAsync(); // Save TAGS (Async allowed here)
+                await _tagRepo.SaveAsync();
 
                 var allTags = existingTags.Concat(newTags);
 
                 foreach (var tag in allTags)
-                {
-                    updatedDrug.DrugTags.Add(new DrugTag
-                    {
-                        TagId = tag.TagId,
-                        DrugId = id
-                    });
-                }
+                    updatedDrug.DrugTags.Add(new DrugTag { TagId = tag.TagId, DrugId = id });
+            }
+            else
+            {
+                updatedDrug.DrugTags = existingDrug.DrugTags; // keep old tags
             }
 
-            // 5. Save Updates
-            _drugRepo.Update(updatedDrug); // FIXED: No await needed here if Update is void
+            _drugRepo.Update(updatedDrug);
+            _drugRepo.Save();
 
-            return Ok(new
-            {
-                success = true,
-                message = "Drug updated successfully"
-            });
+            return Ok(new { success = true, message = "Drug updated successfully" });
         }
     }
 }

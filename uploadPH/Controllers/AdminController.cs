@@ -1,5 +1,3 @@
-// In Pharmacy.Controllers/AdminController.cs
-
 using Microsoft.AspNetCore.Mvc;
 using Pharmacy.Dtos;
 using Pharmacy.Models;
@@ -8,6 +6,10 @@ using Pharmacy.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Pharmacy.Data;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace Pharmacy.Controllers
 {
@@ -17,13 +19,15 @@ namespace Pharmacy.Controllers
     {
         private readonly IAdminRepository _adminRepo;
         private readonly IPasswordHelper _passwordHelper;
-        private readonly PharmacyDbContext _context; // <--- 1. ADD THIS FIELD
+        private readonly PharmacyDbContext _context; 
+        private readonly IAdminLogService _logService;
 
-        public AdminController(IAdminRepository adminRepo, IPasswordHelper passwordHelper, PharmacyDbContext context) // <--- 2. ADD 'PharmacyDbContext context'
+        public AdminController(IAdminRepository adminRepo, IPasswordHelper passwordHelper, PharmacyDbContext context , IAdminLogService logService) 
         {
             _adminRepo = adminRepo;
             _passwordHelper = passwordHelper;
-            _context = context; // <--- 3. INITIALIZE IT HERE
+            _context = context; 
+            _logService = logService;
         }
 
         private AdminResponseDto MapToDto(Admin admin)
@@ -38,27 +42,22 @@ namespace Pharmacy.Controllers
             };
         }
         
-        // --- PUBLIC ENDPOINTS (AUTHENTICATION) ---
-
+        [Authorize(Roles = "super_admin")]
         [HttpPost("signup")]
         public IActionResult SignUp([FromBody] AdminSignupDto dto)
         {
-            // 1. Validate role consistency
             if (dto.Role.ToLower() != "super_admin" && dto.Role.ToLower() != "cashier")
             {
                 return BadRequest(new { success = false, error = "Invalid role specified." });
             }
 
-            // 2. Check if user already exists
             if (_adminRepo.GetByEmail(dto.Email) != null)
             {
                 return Conflict(new { success = false, error = "Email is already registered." });
             }
 
-            // 3. Hash Password
             string passwordHash = _passwordHelper.HashPassword(dto.Password);
 
-            // 4. Create new Admin
             var newAdmin = new Admin
             {
                 Username = dto.Username,
@@ -71,19 +70,74 @@ namespace Pharmacy.Controllers
             _adminRepo.Add(newAdmin);
             _adminRepo.Save();
 
-            // 5. Successful response (We'll handle cookie/token creation separately for now)
-            // Note: In a real system, you would generate a JWT token or set an authentication cookie here.
-            
             return Ok(new
             {
                 success = true,
-                message = "User created successfully. Log in to get a cookie/token."
+                message = "User created successfully."
             });
         }
-        
-        // You will need a 'login' endpoint here that verifies password and sets the cookie.
 
-        // --- AUTHENTICATED/AUTHORIZED ENDPOINTS (USER MANAGEMENT) ---
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(AdminLoginDto dto)
+        {
+            var admin = _adminRepo.GetAll()
+                .FirstOrDefault(a => a.Username == dto.Username);
+
+            if (admin == null)
+                return Unauthorized(new { success = false, error = "Invalid credentials." });
+
+            bool isPasswordCorrect = _passwordHelper.VerifyPassword(dto.Password, admin.PasswordHash);
+            if (!isPasswordCorrect)
+                return Unauthorized(new { success = false, error = "Invalid credentials." });
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, admin.AdminId.ToString()),
+                new Claim(ClaimTypes.Name, admin.Username),
+                new Claim(ClaimTypes.Role, admin.Role)
+            };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal,
+                new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTime.UtcNow.AddDays(7)
+                }
+            );
+
+            // Log the login action
+            await _logService.LogAsync(admin.AdminId, "login");
+
+            return Ok(new
+            {
+                success = true,
+                message = "Logged in successfully.",
+                user = new
+                {
+                    username = admin.Username,
+                    role = admin.Role
+                }
+            });
+        }
+
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var adminId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            await HttpContext.SignOutAsync();
+
+            await _logService.LogAsync(adminId, "logout");
+
+            return Ok(new { success = true, message = "Logged out successfully." });
+        }
+
 
         [HttpGet]
         [Authorize(Roles = "super_admin")]
@@ -100,21 +154,17 @@ namespace Pharmacy.Controllers
             });
         }
         
-        // The POST endpoint is already handled by the 'signup' logic above.
-
         [HttpPut("{id}")]
         [Authorize(Roles = "super_admin")]
         public IActionResult UpdateSystemUser(int id, [FromBody] AdminSignupDto dto)
         {
             var existingAdmin = _adminRepo.GetByEmail(dto.Email);
             
-            // 1. Check if the email is being used by another admin
             if (existingAdmin != null && existingAdmin.AdminId != id)
             {
                 return Conflict(new { success = false, error = "Email is already in use by another user." });
             }
             
-            // 2. Fetch the entity to update
             var adminToUpdate = _context.Admins.Find(id);
 
             if (adminToUpdate == null)
@@ -122,13 +172,10 @@ namespace Pharmacy.Controllers
                 return NotFound(new { success = false, error = "Admin not found." });
             }
             
-            // 3. Update fields
             adminToUpdate.Username = dto.Username;
             adminToUpdate.Email = dto.Email;
             adminToUpdate.Role = dto.Role.ToLower();
             
-            // Hash the password only if it was provided (the PUT request serves as a full update, 
-            // but we usually require password hashing)
             if (!string.IsNullOrWhiteSpace(dto.Password))
             {
                 adminToUpdate.PasswordHash = _passwordHelper.HashPassword(dto.Password);
@@ -152,7 +199,6 @@ namespace Pharmacy.Controllers
             
             if (adminToDelete == null)
             {
-                // Return success if the user is already gone (idempotency)
                 return Ok(new { success = true, message = "Admin deleted" });
             }
             
@@ -160,6 +206,46 @@ namespace Pharmacy.Controllers
             _adminRepo.Save();
 
             return Ok(new { success = true, message = "Admin deleted" });
+        }
+
+
+        [HttpGet("logs")]
+        [Authorize(Roles = "super_admin")]
+        public async Task<IActionResult> GetAdminLogs([FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+        {
+            if (page < 1 || pageSize < 1)
+                return BadRequest(new { success = false, error = "page and pageSize must be positive integers." });
+
+            var query = _context.AdminLogs
+                .Include(l => l.Admin)
+                .OrderByDescending(l => l.ActionTime)
+                .AsQueryable();
+
+            int totalRecords = await query.CountAsync();
+            int totalPages = (int)Math.Ceiling(totalRecords / (double)pageSize);
+
+            var logs = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(log => new
+                {
+                    logId = log.LogId,
+                    adminId = log.AdminId,
+                    adminUsername = log.Admin.Username,
+                    actionType = log.ActionType,
+                    actionTime = log.ActionTime
+                })
+                .ToListAsync();
+
+            return Ok(new
+            {
+                success = true,
+                page,
+                pageSize,
+                totalRecords,
+                totalPages,
+                records = logs
+            });
         }
     }
 }
