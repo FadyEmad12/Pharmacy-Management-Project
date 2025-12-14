@@ -1,5 +1,5 @@
 // In Pharmacy.Repository/AdminRepository.cs
- //
+
 using Pharmacy.Data;
 using Pharmacy.Models;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,7 @@ namespace Pharmacy.Repository
         {
             _context = context;
         }
-
+        
         public Admin? GetByEmail(string email)
         {
             return _context.Admins.FirstOrDefault(a => a.Email == email);

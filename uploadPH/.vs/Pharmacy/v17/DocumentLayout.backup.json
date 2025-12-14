@@ -1,0 +1,193 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\pharmacy_project\\uploadPH\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A709D58C-6BDA-A24A-DE92-D81E5DB3FB6D}|Pharmacy.csproj|d:\\pharmacy_project\\uploadph\\controllers\\drugcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A709D58C-6BDA-A24A-DE92-D81E5DB3FB6D}|Pharmacy.csproj|solutionrelative:controllers\\drugcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A709D58C-6BDA-A24A-DE92-D81E5DB3FB6D}|Pharmacy.csproj|d:\\pharmacy_project\\uploadph\\services\\drugservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A709D58C-6BDA-A24A-DE92-D81E5DB3FB6D}|Pharmacy.csproj|solutionrelative:services\\drugservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A709D58C-6BDA-A24A-DE92-D81E5DB3FB6D}|Pharmacy.csproj|d:\\pharmacy_project\\uploadph\\services\\idrugservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A709D58C-6BDA-A24A-DE92-D81E5DB3FB6D}|Pharmacy.csproj|solutionrelative:services\\idrugservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A709D58C-6BDA-A24A-DE92-D81E5DB3FB6D}|Pharmacy.csproj|d:\\pharmacy_project\\uploadph\\repository\\idrugrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A709D58C-6BDA-A24A-DE92-D81E5DB3FB6D}|Pharmacy.csproj|solutionrelative:repository\\idrugrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A709D58C-6BDA-A24A-DE92-D81E5DB3FB6D}|Pharmacy.csproj|d:\\pharmacy_project\\uploadph\\repository\\drugrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A709D58C-6BDA-A24A-DE92-D81E5DB3FB6D}|Pharmacy.csproj|solutionrelative:repository\\drugrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A709D58C-6BDA-A24A-DE92-D81E5DB3FB6D}|Pharmacy.csproj|d:\\pharmacy_project\\uploadph\\tasks.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A709D58C-6BDA-A24A-DE92-D81E5DB3FB6D}|Pharmacy.csproj|solutionrelative:tasks.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 382,
+          "SelectedChildIndex": 9,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:11:0:{2456bd12-ecf7-4988-a4a6-67d49173f565}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{e8b06f52-6d01-11d2-aa7d-00c04f990343}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{131369f2-062d-44a2-8671-91ff31efb4f4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "IDrugRepository.cs",
+              "DocumentMoniker": "D:\\pharmacy_project\\uploadPH\\Repository\\IDrugRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\IDrugRepository.cs",
+              "ToolTip": "D:\\pharmacy_project\\uploadPH\\Repository\\IDrugRepository.cs",
+              "RelativeToolTip": "Repository\\IDrugRepository.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAAA6wCwAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T14:54:29.099Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DrugRepository.cs",
+              "DocumentMoniker": "D:\\pharmacy_project\\uploadPH\\Repository\\DrugRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\DrugRepository.cs",
+              "ToolTip": "D:\\pharmacy_project\\uploadPH\\Repository\\DrugRepository.cs",
+              "RelativeToolTip": "Repository\\DrugRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAJcAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T14:54:28.067Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "IDrugService.cs",
+              "DocumentMoniker": "D:\\pharmacy_project\\uploadPH\\Services\\IDrugService.cs",
+              "RelativeDocumentMoniker": "Services\\IDrugService.cs",
+              "ToolTip": "D:\\pharmacy_project\\uploadPH\\Services\\IDrugService.cs",
+              "RelativeToolTip": "Services\\IDrugService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T14:54:16.907Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DrugService.cs",
+              "DocumentMoniker": "D:\\pharmacy_project\\uploadPH\\Services\\DrugService.cs",
+              "RelativeDocumentMoniker": "Services\\DrugService.cs",
+              "ToolTip": "D:\\pharmacy_project\\uploadPH\\Services\\DrugService.cs",
+              "RelativeToolTip": "Services\\DrugService.cs",
+              "ViewState": "AgIAAI0AAAAAAAAAAAAvwJwAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T14:54:16.005Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DrugController.cs",
+              "DocumentMoniker": "D:\\pharmacy_project\\uploadPH\\Controllers\\DrugController.cs",
+              "RelativeDocumentMoniker": "Controllers\\DrugController.cs",
+              "ToolTip": "D:\\pharmacy_project\\uploadPH\\Controllers\\DrugController.cs*",
+              "RelativeToolTip": "Controllers\\DrugController.cs*",
+              "ViewState": "AgIAAHYAAAAAAAAAAAA/wIAAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-14T14:53:25.759Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 13,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 13,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 970,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "FloatingWindowState": {
+        "Id": "b5f7508b-ec17-4f0c-88ae-c825cb1c4872",
+        "Display": 0,
+        "X": 1091,
+        "Y": 37,
+        "Width": 133,
+        "Height": 570,
+        "WindowState": 2
+      },
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "tasks.txt",
+              "DocumentMoniker": "D:\\pharmacy_project\\uploadPH\\tasks.txt",
+              "RelativeDocumentMoniker": "tasks.txt",
+              "ToolTip": "D:\\pharmacy_project\\uploadPH\\tasks.txt",
+              "RelativeToolTip": "tasks.txt",
+              "ViewState": "AgIAAMwAAAAAAAAAAAAAAPAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-12-13T15:22:16.135Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

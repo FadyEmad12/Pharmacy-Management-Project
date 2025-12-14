@@ -4,6 +4,7 @@ using Pharmacy.Repository;
 using Pharmacy.Services;
 using Pharmacy.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,9 +30,13 @@ builder.Services.AddDbContext<PharmacyDbContext>(options =>
 
 // Register Repository
 builder.Services.AddScoped<IDrugRepository, DrugRepository>();
+builder.Services.AddScoped<IDrugService, DrugService>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>(); 
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<IInvoiceItemRepository, InvoiceItemRepository>();
 builder.Services.AddScoped<DatabaseSeeder>();
 builder.Services.AddScoped<IAdminLogService, AdminLogService>();
 
@@ -39,6 +44,7 @@ builder.Services.AddScoped<IAdminLogService, AdminLogService>();
 // Add Swagger for API testing
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 
@@ -48,7 +54,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-//sedding the database 
+//sedding the database
+
 using (var scope = app.Services.CreateScope())
 {
     var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
@@ -59,7 +66,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseAuthentication();
 
 app.UseAuthorization();
 

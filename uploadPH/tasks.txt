@@ -9,7 +9,7 @@ create the endpoints and the controller for the invoices and for its logs
 here is how it works 
 
 
-    🧾 1. Create Invoice
+  //  🧾 1. Create Invoice
     POST /api/invoices
 
     Creates a new invoice with items.
@@ -169,7 +169,7 @@ here is how it works
       }
     ]
 
-    📌 7. Add Item to Invoice
+  //  📌 7. Add Item to Invoice
     POST /api/invoices/{invoice_id}/items
     {
       "drug_id": 7,

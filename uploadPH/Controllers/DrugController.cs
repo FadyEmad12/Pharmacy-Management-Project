@@ -1,296 +1,138 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.IO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pharmacy.Data; // Required for PharmacyDbContext
 using Pharmacy.Dtos;
 using Pharmacy.Models;
 using Pharmacy.Repository;
-using System.IO;
+using Pharmacy.Services;
 
 namespace Pharmacy.Controllers
+   
 {
     [ApiController]
     [Route("api/[controller]")]
     public class DrugsController : ControllerBase
     {
-        private readonly IDrugRepository _drugRepo;
-        private readonly ITagRepository _tagRepo;
-        private readonly PharmacyDbContext _context; 
+        private readonly IDrugService _drugService;
+       
+        private readonly List<string> _allowedExtensions = new() { ".jpg", ".jpeg", ".png" };
+        private const long MaxAllowedSize = 100 * 1024 * 1024;
 
-        public DrugsController(IDrugRepository drugRepo, ITagRepository tagRepo, PharmacyDbContext context)
+        public DrugsController(IDrugService drugService)
         {
-            _drugRepo = drugRepo;
-            _tagRepo = tagRepo;
-            _context = context; 
+            _drugService = drugService;
+            
         }
 
-        private string? ValidateDrugLogic(string drugType, DateOnly? expirationDate)
-        {
-            var allowedTypes = new[]
-            { "tablet", "syrup", "injection", "capsule", "cream", "gel", "spray", "drops" };
-
-            if (!allowedTypes.Contains(drugType.ToLower()))
-                return "Invalid drug type.";
-
-            if (expirationDate.HasValue && expirationDate <= DateOnly.FromDateTime(DateTime.Today))
-                return "Expiration date must be after today.";
-
-            return null; 
-        }
-
-        private DrugDto MapToDto(Drug d)
-        {
-            int totalAmount = d.ShelfAmount + d.StoredAmount;
-
-
-            var tagNames = d.DrugTags != null 
-                ? d.DrugTags.Select(dt => dt.Tag.Name).ToList() 
-                : new List<string>();
-
-            return new DrugDto
-            {
-                DrugId = d.DrugId,
-                Name = d.Name,
-                SellingPrice = d.SellingPrice,
-                PurchasingPrice = d.PurchasingPrice,
-                Barcode = d.Barcode,
-                ImageUrl = d.ImageUrl,
-                DescriptionBeforeUse = d.DescriptionBeforeUse,
-                DescriptionHowToUse = d.DescriptionHowToUse,
-                DescriptionSideEffects = d.DescriptionSideEffects,
-                RequiresPrescription = d.RequiresPrescription,
-                DrugType = d.DrugType,
-                Manufacturer = d.Manufacturer,
-                ExpirationDate = d.ExpirationDate,
-                ShelfAmount = d.ShelfAmount,
-                StoredAmount = d.StoredAmount,
-                SubAmountQuantity = d.SubAmountQuantity,
-                CreatedAt = d.CreatedAt,
-                Tags = tagNames,
-                IsLow = totalAmount <= d.LowAmount ? 1 : 0
-            };
-        }
-
+        // GET: api/drugs
         [HttpGet]
-        public IActionResult GetAllDrugs()
+        public async Task<IActionResult> GetAllDrugs()
         {
-            var drugs = _drugRepo.GetAll();
-            var dtoList = drugs.Select(MapToDto).ToList();
-
-            return Ok(new
-            {
-                success = true,
-                count = dtoList.Count,
-                data = dtoList
-            });
+            var drugs = await _drugService.GetAllDrugsAsync();
+            return Ok(drugs);
         }
 
+        // GET: api/drugs/5
         [HttpGet("{id}")]
-        public IActionResult GetDrugById(int id)
+        public async Task<IActionResult> GetDrugById(int id)
         {
-            var drug = _drugRepo.GetById(id);
-
+            var drug = await _drugService.GetDrugByIdAsync(id);
             if (drug == null)
-            {
-                return NotFound(new
-                {
-                    success = false,
-                    error = "Drug not found"
-                });
-            }
-
-            var drugDto = MapToDto(drug);
-
-            return Ok(new
-            {
-                success = true,
-                data = drugDto
-            });
+                return NotFound(new { message = "Drug not found" });
+            return Ok(drug);
         }
 
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "super_admin")]
-        public IActionResult DeleteDrug(int id)
+        // GET: api/drugs/search
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchDrugs(string? name, string? barcode, string? type, string? tags)
         {
-            var drug = _drugRepo.GetById(id);
-
-            if (drug == null)
-            {
-                return NotFound(new
-                {
-                    success = false,
-                    error = $"Drug with ID {id} not found."
-                });
-            }
-
-            _drugRepo.Delete(id);
-
-            return Ok(new
-            {
-                success = true,
-                message = "Drug deleted"
-            });
+            var drugs = await _drugService.SearchDrugsAsync(name, barcode, type, tags);
+            return Ok(drugs);
         }
-
         [HttpPost]
-        [Authorize(Roles = "super_admin")]
-        [Consumes("multipart/form-data")]
-        public async Task<IActionResult> CreateDrug([FromForm] DrugCreateDto dto)
+        public async Task<IActionResult> AddDrug([FromForm] DrugCreateDto dto)
         {
-            string? validationError = ValidateDrugLogic(dto.DrugType, dto.ExpirationDate);
-            if (validationError != null)
-                return BadRequest(validationError);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            string? fileName = null;
+            if (dto.Image == null)
+                return BadRequest("Image is required");
 
-            // Handle image only if provided
-            if (dto.Image != null && dto.Image.Length > 0)
+            var allowedExtensions = new List<string> { ".jpg", ".jpeg", ".png" };
+            var ext = Path.GetExtension(dto.Image.FileName).ToLower();
+            if (!allowedExtensions.Contains(ext))
+                return BadRequest("Only .jpg, .jpeg, and .png images are allowed!");
+
+            const long maxSize = 100 * 1024 * 1024;
+            if (dto.Image.Length > maxSize)
+                return BadRequest("Max allowed size for image is 100MB");
+            var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            if (!Directory.Exists(uploadsPath))
+                Directory.CreateDirectory(uploadsPath);
+
+            var fileName = $"{Guid.NewGuid()}_{dto.Image.FileName}";
+            var filePath = Path.Combine(uploadsPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-                if (!Directory.Exists(uploadsPath))
-                    Directory.CreateDirectory(uploadsPath);
-
-                fileName = $"{Guid.NewGuid()}_{dto.Image.FileName}";
-                var filePath = Path.Combine(uploadsPath, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await dto.Image.CopyToAsync(stream);
-                }
+                await dto.Image.CopyToAsync(stream);
             }
+           
 
-            var drug = new Drug
+            var imageUrl = $"/uploads/{fileName}";
+
+
+            var result = await _drugService.CreateDrugAsync(dto, imageUrl);
+
+            if (!result.Success)
+                return BadRequest(result.ErrorMessage);
+
+            return Ok(new
             {
-                Name = dto.Name,
-                SellingPrice = dto.SellingPrice,
-                PurchasingPrice = dto.PurchasingPrice,
-                Barcode = dto.Barcode,
-
-                // ❗ If no image uploaded, ImageUrl becomes null
-                ImageUrl = fileName != null ? "/uploads/" + fileName : null,
-
-                DescriptionBeforeUse = dto.DescriptionBeforeUse,
-                DescriptionHowToUse = dto.DescriptionHowToUse,
-                DescriptionSideEffects = dto.DescriptionSideEffects,
-                RequiresPrescription = dto.RequiresPrescription,
-                DrugType = dto.DrugType,
-                Manufacturer = dto.Manufacturer,
-                ExpirationDate = dto.ExpirationDate,
-                ShelfAmount = dto.ShelfAmount,
-                StoredAmount = dto.StoredAmount,
-                LowAmount = dto.LowAmount,
-                SubAmountQuantity = dto.SubAmountQuantity,
-                CreatedAt = DateTime.Now,
-                DrugTags = new List<DrugTag>()
-            };
-
-            // --------- TAG LOGIC (unchanged) ----------
-            if (dto.Tags != null && dto.Tags.Any())
-            {
-                var tagNames = dto.Tags.Distinct().Select(n => n.ToLower()).ToList();
-                List<Tag> existingTags = await _tagRepo.GetTagsByNamesAsync(tagNames);
-
-                var existingTagNames = existingTags.Select(t => t.Name.ToLower()).ToList();
-                var newTagNames = tagNames.Except(existingTagNames, StringComparer.OrdinalIgnoreCase).ToList();
-                var newTags = newTagNames.Select(name => new Tag { Name = name }).ToList();
-
-                _tagRepo.AddRange(newTags);
-                await _tagRepo.SaveAsync();
-
-                var allTags = existingTags.Concat(newTags);
-
-                foreach (var tag in allTags)
-                {
-                    drug.DrugTags.Add(new DrugTag { TagId = tag.TagId });
-                }
-            }
-
-            _drugRepo.Add(drug);
-            _drugRepo.Save();
-
-            return Ok(new { message = "Drug created successfully", drugId = drug.DrugId });
+                success = true,
+                msg = "Drug created successfully",
+                drugId = result.DrugId,
+                image = result.ImagePath
+            });
         }
 
 
+        // PUT: api/drugs/5
         [HttpPut("{id}")]
-        [Authorize(Roles = "super_admin")]
         public async Task<IActionResult> UpdateDrug(int id, [FromBody] DrugUpdateDto dto)
         {
-            string? validationError = ValidateDrugLogic(dto.DrugType, dto.ExpirationDate);
-            if (validationError != null)
-                return BadRequest(validationError);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            var existingDrug = await _context.Drugs
-                .AsNoTracking()
-                .Include(d => d.DrugTags)
-                .FirstOrDefaultAsync(d => d.DrugId == id);
+            var updated = await _drugService.UpdateDrugAsync(id, dto);
 
-            if (existingDrug == null)
-                return NotFound(new { success = false, error = $"Drug with ID {id} not found." });
-
-            // Prevent duplicate barcode
-            var duplicateBarcode = await _context.Drugs
-                .AnyAsync(d => d.Barcode == dto.Barcode && d.DrugId != id);
-
-            if (duplicateBarcode)
-                return Conflict("A drug with this barcode already exists.");
-
-            var updatedDrug = new Drug
-            {
-                DrugId = id,
-                Name = dto.Name ?? existingDrug.Name,
-                SellingPrice = dto.SellingPrice,
-                PurchasingPrice = dto.PurchasingPrice,
-                Barcode = dto.Barcode ?? existingDrug.Barcode,
-                DrugType = dto.DrugType,
-                ExpirationDate = dto.ExpirationDate,
-                ShelfAmount = dto.ShelfAmount,
-                StoredAmount = dto.StoredAmount,
-                SubAmountQuantity = dto.SubAmountQuantity,
-                LowAmount = dto.LowAmount,
-
-                ImageUrl = existingDrug.ImageUrl,
-                CreatedAt = existingDrug.CreatedAt,
-                DescriptionBeforeUse = existingDrug.DescriptionBeforeUse,
-                DescriptionHowToUse = existingDrug.DescriptionHowToUse,
-                DescriptionSideEffects = existingDrug.DescriptionSideEffects,
-                RequiresPrescription = existingDrug.RequiresPrescription,
-                Manufacturer = existingDrug.Manufacturer,
-
-                DrugTags = new List<DrugTag>()
-            };
-
-            if (dto.Tags != null && dto.Tags.Any())
-            {
-                var tagNames = dto.Tags
-                    .Distinct()
-                    .Select(n => n.ToLower())
-                    .ToList();
-
-                var existingTags = await _tagRepo.GetTagsByNamesAsync(tagNames);
-
-                var newTagNames = tagNames
-                    .Except(existingTags.Select(t => t.Name.ToLower()))
-                    .ToList();
-
-                var newTags = newTagNames.Select(name => new Tag { Name = name }).ToList();
-                _tagRepo.AddRange(newTags);
-                await _tagRepo.SaveAsync();
-
-                var allTags = existingTags.Concat(newTags);
-
-                foreach (var tag in allTags)
-                    updatedDrug.DrugTags.Add(new DrugTag { TagId = tag.TagId, DrugId = id });
-            }
-            else
-            {
-                updatedDrug.DrugTags = existingDrug.DrugTags; // keep old tags
-            }
-
-            _drugRepo.Update(updatedDrug);
-            _drugRepo.Save();
+            if (!updated)
+                return BadRequest(new { success = false, message = "Update failed" });
 
             return Ok(new { success = true, message = "Drug updated successfully" });
         }
+
+        // DELETE: api/drugs/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var deleted = await _drugService.DeleteDrugAsync(id);
+
+            if (!deleted)
+                return NotFound(new { message = "Drug not found" });
+
+            return Ok(new { success = true, message = "Drug Deleted successfully" });
+        }
+        [HttpGet("generate-barcode")]
+       
+        public async Task<IActionResult> GenerateBarcode()
+        {
+            var barcode = await _drugService.GenerateUniqueBarcodeAsync();
+            return Ok(new { success = true, barcode });
+        }
+
     }
+    
 }

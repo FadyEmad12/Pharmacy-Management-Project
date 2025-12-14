@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Pharmacy.Controllers
 {
+   
     [ApiController]
     [Route("api/[controller]")]
     public class AdminController : ControllerBase
