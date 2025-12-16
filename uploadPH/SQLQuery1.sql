@@ -105,6 +105,7 @@ CREATE TABLE invoices (
     total_amount     DECIMAL(18,2) NOT NULL DEFAULT 0,
     tax_amount       DECIMAL(18,2) NOT NULL DEFAULT 0,
     discount_amount  DECIMAL(18,2) NOT NULL DEFAULT 0,
+    amount_paid      DECIMAL(18,2) NOT NULL DEFAULT 0,
     change_amount    DECIMAL(18,2) NOT NULL DEFAULT 0,
     CONSTRAINT fk_invoice_admin FOREIGN KEY (admin_id)
         REFERENCES admins(admin_id)

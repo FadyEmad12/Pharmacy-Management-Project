@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Pharmacy.Models.Dto;
 using Pharmacy.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Pharmacy.Controllers
 {
@@ -15,13 +16,19 @@ namespace Pharmacy.Controllers
         {
             _service = service;
         }
+
+
         [HttpGet]
+        [Authorize(Roles = "super_admin")]
         public async Task<IActionResult> GetAllInvoices()
         {
             var invoices = await _service.GetAllInvoicesAsync();
             return Ok(invoices);
         }
+
+
         [HttpGet("{id:int}")]
+        [Authorize(Roles = "super_admin")]
         public async Task<IActionResult> GetInvoiceById(int id)
         {
             try
@@ -39,6 +46,7 @@ namespace Pharmacy.Controllers
             }
         }
         [HttpGet("range")]
+        [Authorize(Roles = "super_admin")]
         public async Task<IActionResult> GetInvoicesByDateRange([FromQuery] DateTime from, [FromQuery] DateTime to)
         {
             try
@@ -55,7 +63,10 @@ namespace Pharmacy.Controllers
                 });
             }
         }
+
+
         [HttpGet("{invoiceId:int}/items")]
+        [Authorize(Roles = "super_admin")]
         public async Task<IActionResult> GetInvoiceItems(int invoiceId)
         {
             try
@@ -75,56 +86,76 @@ namespace Pharmacy.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "super_admin")]
         public async Task<IActionResult> CreateInvoice([FromBody] CreateInvoiceDto dto)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var invoice = await _service.CreateInvoiceAsync(dto);
-
-            var response = new ApiResponse<InvoiceResponseDto>
-            {
-                Success = true,
-                Invoice = invoice
-            };
-
-            return CreatedAtAction(nameof(CreateInvoice), response);
-        }
-        [HttpPost("{invoiceId:int}/items")]
-        public async Task<IActionResult> AddItemToInvoice(int invoiceId, [FromBody] InvoiceItemDto dto)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            return BadRequest(ModelState);
 
             try
             {
-              
-                var item = await _service.AddItemToInvoiceAsync(invoiceId, dto);
+                var invoice = await _service.CreateInvoiceAsync(dto);
 
-                
-                return Created("", new
+                return CreatedAtAction(nameof(CreateInvoice), new
                 {
-                    success = true,
-                    item = new
-                    {
-                        item_id = item.ItemId,
-                        drug_id = item.DrugId,
-                        quantity = item.Quantity,
-                        price_per_unit = item.PricePerUnit,
-                        total_price = item.TotalPrice
-                    }
+                    Success = true,
+                    Invoice = invoice
                 });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
             }
             catch (KeyNotFoundException ex)
             {
                 return NotFound(new { success = false, message = ex.Message });
             }
-            catch (Exception ex)
+            catch (InvalidOperationException ex)
             {
-                return BadRequest(new { success = false, message = ex.Message });
+                return Conflict(new { success = false, message = ex.Message });
             }
+            
         }
+
+        /*This does not help the Pharma by any means */
+        // [HttpPost("{invoiceId:int}/items")]
+        // public async Task<IActionResult> AddItemToInvoice(int invoiceId, [FromBody] InvoiceItemDto dto)
+        // {
+        //     if (!ModelState.IsValid)
+        //         return BadRequest(ModelState);
+
+        //     try
+        //     {
+              
+        //         var item = await _service.AddItemToInvoiceAsync(invoiceId, dto);
+
+                
+        //         return Created("", new
+        //         {
+        //             success = true,
+        //             item = new
+        //             {
+        //                 item_id = item.ItemId,
+        //                 drug_id = item.DrugId,
+        //                 quantity = item.Quantity,
+        //                 price_per_unit = item.PricePerUnit,
+        //                 total_price = item.TotalPrice
+        //             }
+        //         });
+        //     }
+        //     catch (KeyNotFoundException ex)
+        //     {
+        //         return NotFound(new { success = false, message = ex.Message });
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return BadRequest(new { success = false, message = ex.Message });
+        //     }
+        // }
+
+        
         [HttpDelete("{id:int}")]
+        [Authorize(Roles = "super_admin")]
         public async Task<IActionResult> DeleteInvoice(int id)
         {
             try
@@ -147,19 +178,20 @@ namespace Pharmacy.Controllers
             }
         }
         
-        [HttpDelete("items/{itemId:int}")]
-        public async Task<IActionResult> RemoveItem(int itemId, [FromQuery] int quantity = 1)
-        {
-            try
-            {
-                await _service.RemoveInvoiceItemAsync(itemId, quantity);
-                return Ok(new { success = true });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { success = false, message = ex.Message });
-            }
-        }
+        /*Is not helpful*/
+        // [HttpDelete("items/{itemId:int}")]
+        // public async Task<IActionResult> RemoveItem(int itemId, [FromQuery] int quantity = 1)
+        // {
+        //     try
+        //     {
+        //         await _service.RemoveInvoiceItemAsync(itemId, quantity);
+        //         return Ok(new { success = true });
+        //     }
+        //     catch (KeyNotFoundException ex)
+        //     {
+        //         return NotFound(new { success = false, message = ex.Message });
+        //     }
+        // }
        
 
     }

@@ -60,20 +60,32 @@ namespace Pharmacy.Repository
             return query.Where(d => d.Name.Contains(name));
         }
 
-        public IQueryable<Drug> FilterByBarcode(IQueryable<Drug> query, string barcode)
+      public IQueryable<Drug> FilterByBarcode(IQueryable<Drug> query, string barcode)
         {
-            return query.Where(d => d.Barcode.Contains(barcode));
+            return query.Where(d =>
+                d.Barcode != null &&
+                d.Barcode.Contains(barcode)
+            );
         }
+
 
         public IQueryable<Drug> FilterByType(IQueryable<Drug> query, string type)
         {
             return query.Where(d => d.DrugType == type);
         }
 
+
         public IQueryable<Drug> FilterByTags(IQueryable<Drug> query, List<string> tags)
         {
-            return query.Where(d => d.DrugTags.Any(dt => tags.Contains(dt.Tag.Name)));
+            return query.Where(d =>
+                d.DrugTags.Any(dt =>
+                    dt.Tag != null &&
+                    dt.Tag.Name != null &&
+                    tags.Contains(dt.Tag.Name)
+                )
+            );
         }
+
 
         public async Task<List<Drug>> SearchAsync(string? name, string? barcode, string? type, List<string>? tags)
         {
@@ -142,8 +154,13 @@ namespace Pharmacy.Repository
 
         public async Task<List<Tag>> GetTagsByNamesAsync(List<string> names)
         {
+            var loweredNames = names
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .Select(n => n.ToLower())
+                .ToList();
+
             return await _context.Tags
-                .Where(t => names.Contains(t.Name.ToLower()))
+                .Where(t => t.Name != null && loweredNames.Contains(t.Name.ToLower()))
                 .ToListAsync();
         }
         public async Task<bool> BarcodeExistsAsync(string barcode)

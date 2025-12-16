@@ -84,7 +84,8 @@ namespace Pharmacy.Services
         public async Task<bool> UpdateDrugAsync(int id, DrugUpdateDto dto)
         {
             var existing = await _repo.GetByIdWithTagsAsync(id);
-            if (existing == null) return false;
+            if (existing == null)
+                return false;
 
             var allowedTypes = new List<string>
             {
@@ -92,12 +93,16 @@ namespace Pharmacy.Services
                 "capsule", "injection", "syrup", "tablet"
             };
 
-            if (!allowedTypes.Contains(dto.DrugType?.ToLower()))
+            if (string.IsNullOrWhiteSpace(dto.DrugType))
+                return false;
+
+            var drugType = dto.DrugType.ToLower();
+
+            if (!allowedTypes.Contains(drugType))
                 return false;
 
             _mapper.Map(dto, existing);
 
-          
             if (dto.Tags != null)
             {
                 existing.DrugTags.Clear();
@@ -105,7 +110,8 @@ namespace Pharmacy.Services
                 foreach (var name in dto.Tags)
                 {
                     var tag = await _repo.GetTagByNameAsync(name);
-                    if (tag == null) return false;
+                    if (tag == null)
+                        return false;
 
                     existing.DrugTags.Add(new DrugTag
                     {
@@ -118,6 +124,7 @@ namespace Pharmacy.Services
             await _repo.SaveChangesAsync();
             return true;
         }
+
 
         public async Task<bool> DeleteDrugAsync(int id)
         {

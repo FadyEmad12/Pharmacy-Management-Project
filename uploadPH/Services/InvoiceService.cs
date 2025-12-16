@@ -45,56 +45,75 @@ namespace Pharmacy.Services
             var invoices = await _invoiceRepo.GetByDateRangeAsync(from, to);
             return _mapper.Map<List<InvoiceDateDto>>(invoices);
         }
+
         public async Task<InvoiceResponseDto> CreateInvoiceAsync(CreateInvoiceDto dto)
         {
+            if (dto.Items == null || !dto.Items.Any())
+                throw new ArgumentException("Invoice must contain at least one item");
+
             var invoice = new Invoice
             {
                 AdminId = dto.AdminId,
-                DiscountAmount = dto.DiscountAmount,
                 TaxAmount = dto.TaxAmount,
-                ChangeAmount = dto.ChangeAmount,
+                DiscountAmount = dto.DiscountAmount,
+                AmountPaid = dto.AmountPaid,
                 InvoiceTime = DateTime.UtcNow
             };
 
-            decimal totalAmount = 0;
+            decimal itemsTotal = 0;
             var items = new List<InvoiceItem>();
 
-          
             foreach (var itemDto in dto.Items)
             {
                 var drug = await _drugRepo.GetByIdAsync(itemDto.DrugId);
                 if (drug == null)
                     throw new KeyNotFoundException($"Drug {itemDto.DrugId} not found");
 
+                if (drug.ShelfAmount <= 0)
+                    throw new InvalidOperationException(
+                        $"Drug '{drug.Name}' is out of stock");
+
+                if (drug.ShelfAmount < itemDto.Quantity)
+                    throw new InvalidOperationException(
+                        $"Not enough '{drug.Name}' on shelf. Available: {drug.ShelfAmount}");
+
                 var item = new InvoiceItem
                 {
                     Invoice = invoice,
+                    DrugId = drug.DrugId,
                     Drug = drug,
-                    DrugId = itemDto.DrugId,
                     Quantity = itemDto.Quantity
                 };
 
-                totalAmount += drug.PurchasingPrice * itemDto.Quantity;
+                itemsTotal += drug.SellingPrice * itemDto.Quantity;
+
+                drug.ShelfAmount -= itemDto.Quantity;
+
                 items.Add(item);
             }
-            invoice.TotalAmount = totalAmount - dto.DiscountAmount + dto.TaxAmount;
 
-            
+            invoice.TotalAmount = itemsTotal - invoice.DiscountAmount + invoice.TaxAmount;
+
+            if (invoice.AmountPaid < invoice.TotalAmount)
+                throw new InvalidOperationException(
+                    $"Amount paid ({invoice.AmountPaid}) is less than total ({invoice.TotalAmount})");
+
+            invoice.ChangeAmount = invoice.AmountPaid - invoice.TotalAmount;
+
             await _invoiceRepo.AddAsync(invoice);
             await _invoiceRepo.SaveChangesAsync();
 
-          
             foreach (var item in items)
             {
                 await _itemRepo.AddAsync(item);
             }
+
             await _itemRepo.SaveChangesAsync();
+
             invoice.InvoiceItems = items;
 
-            
             return _mapper.Map<InvoiceResponseDto>(invoice);
         }
-
 
         public async Task<InvoiceItemResponseDto> AddItemToInvoiceAsync(
        int invoiceId, InvoiceItemDto dto)

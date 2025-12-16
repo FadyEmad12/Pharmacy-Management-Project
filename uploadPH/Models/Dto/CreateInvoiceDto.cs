@@ -6,6 +6,6 @@
         public List<InvoiceItemDto> Items { get; set; } = new List<InvoiceItemDto>();
         public decimal DiscountAmount { get; set; }
         public decimal TaxAmount { get; set; }
-        public decimal ChangeAmount { get; set; }
+        public decimal AmountPaid { get; set; }
     }
 }

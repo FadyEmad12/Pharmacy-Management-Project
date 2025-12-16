@@ -126,11 +126,14 @@ namespace Pharmacy.Controllers
             });
         }
 
-
+        [Authorize(Roles = "super_admin")]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            var adminId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var adminIdValue = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(adminIdValue) || !int.TryParse(adminIdValue, out int adminId))
+                return Unauthorized("Invalid or missing admin identity.");
 
             await HttpContext.SignOutAsync();
 
@@ -138,6 +141,7 @@ namespace Pharmacy.Controllers
 
             return Ok(new { success = true, message = "Logged out successfully." });
         }
+
 
 
         [HttpGet]

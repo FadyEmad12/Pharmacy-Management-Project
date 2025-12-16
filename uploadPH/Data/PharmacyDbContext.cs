@@ -121,6 +121,7 @@ namespace Pharmacy.Data
                 entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 2)").HasColumnName("discount_amount");
                 entity.Property(e => e.InvoiceTime).HasDefaultValueSql("(sysutcdatetime())").HasColumnName("invoice_time");
                 entity.Property(e => e.TaxAmount).HasColumnType("decimal(18, 2)").HasColumnName("tax_amount");
+                entity.Property(e => e.AmountPaid).HasColumnType("decimal(18, 2)").HasColumnName("amount_paid");
                 entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)").HasColumnName("total_amount");
                 entity.HasOne(d => d.Admin).WithMany(p => p.Invoices)
                     .HasForeignKey(d => d.AdminId)

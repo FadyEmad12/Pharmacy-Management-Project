@@ -17,6 +17,8 @@ public partial class Invoice
 
     public decimal DiscountAmount { get; set; }
 
+    public decimal AmountPaid { get; set; } 
+
     public decimal ChangeAmount { get; set; }
 
     public virtual Admin? Admin { get; set; }

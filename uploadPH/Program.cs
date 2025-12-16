@@ -26,7 +26,7 @@ builder.Services.AddAuthorization();
 
 // Register DbContext with SQL Server
 builder.Services.AddDbContext<PharmacyDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); // i have  used a new connection string that will work with any sql server express so you dont need to change it later
 
 // Register Repository
 builder.Services.AddScoped<IDrugRepository, DrugRepository>();
