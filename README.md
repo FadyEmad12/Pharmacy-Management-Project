@@ -19,11 +19,17 @@ GitHub Issues & Pull Requests
 Weekly team meetings
 
 To check the Project Very Well follow the following steps PDF by PDF:
+
 1- Open Team Info (PDF).
+
 2- Open Project Proposal (PDF).
+
 3- Open Project Planning (PDF) Then Project Scheduling (PDF). 
+
 4- Open SRS for the Pharmacy Management (PDF).
+
 5- Open System Design (PDF).
+
 6- Open User Manual (PDF) Then Powerpoint as a breif (PPT) OR (PDF) as you like.
 
 Thank you So much for your Interesting and Attention with us.
