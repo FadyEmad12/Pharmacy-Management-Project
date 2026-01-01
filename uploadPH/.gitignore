@@ -60,7 +60,7 @@ yarn-error.log
 # --- Configuration and Secrets ---
 # Ignore launch settings and local secrets
 appsettings.Development.json
-appsettings.Staging.json
+ appsettings.Staging.json
 appsettings.Production.json
 # Or ignore specific files that might contain secrets
 *.secrets.json
