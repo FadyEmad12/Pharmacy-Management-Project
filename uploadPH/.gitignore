@@ -70,3 +70,7 @@ appsettings.Local.json
 # --- Log Files ---
 *.log
 [Ll]og/
+
+publish
+appsettings.json
+appsettings.Development.json

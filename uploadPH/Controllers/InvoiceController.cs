@@ -19,7 +19,7 @@ namespace Pharmacy.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         public async Task<IActionResult> GetAllInvoices()
         {
             var invoices = await _service.GetAllInvoicesAsync();
@@ -28,7 +28,7 @@ namespace Pharmacy.Controllers
 
 
         [HttpGet("{id:int}")]
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         public async Task<IActionResult> GetInvoiceById(int id)
         {
             try
@@ -46,7 +46,7 @@ namespace Pharmacy.Controllers
             }
         }
         [HttpGet("range")]
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         public async Task<IActionResult> GetInvoicesByDateRange([FromQuery] DateTime from, [FromQuery] DateTime to)
         {
             try
@@ -66,7 +66,7 @@ namespace Pharmacy.Controllers
 
 
         [HttpGet("{invoiceId:int}/items")]
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         public async Task<IActionResult> GetInvoiceItems(int invoiceId)
         {
             try
@@ -86,7 +86,7 @@ namespace Pharmacy.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         public async Task<IActionResult> CreateInvoice([FromBody] CreateInvoiceDto dto)
         {
             if (!ModelState.IsValid)
@@ -155,7 +155,7 @@ namespace Pharmacy.Controllers
 
         
         [HttpDelete("{id:int}")]
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         public async Task<IActionResult> DeleteInvoice(int id)
         {
             try

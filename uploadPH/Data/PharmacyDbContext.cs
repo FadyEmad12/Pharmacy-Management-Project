@@ -20,13 +20,11 @@ namespace Pharmacy.Data
         public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<InvoiceItem> InvoiceItems { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
-
-        // --- NEW: DbSet for the explicit join table ---
         public virtual DbSet<DrugTag> DrugTags { get; set; }
-        // ----------------------------------------------
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // --- ADMIN ENTITY ---
             modelBuilder.Entity<Admin>(entity =>
             {
                 entity.HasKey(e => e.AdminId).HasName("PK__admins__43AA4141A585EE2F");
@@ -41,7 +39,7 @@ namespace Pharmacy.Data
                 entity.Property(e => e.Username).HasMaxLength(255).HasColumnName("username");
             });
 
-
+            // --- ADMIN LOG ENTITY ---
             modelBuilder.Entity<AdminLog>(entity =>
             {
                 entity.HasKey(e => e.LogId).HasName("PK__admin_lo__9E2397E0E51EA211");
@@ -50,11 +48,15 @@ namespace Pharmacy.Data
                 entity.Property(e => e.ActionTime).HasDefaultValueSql("(sysutcdatetime())").HasColumnName("action_time");
                 entity.Property(e => e.ActionType).HasMaxLength(50).HasColumnName("action_type");
                 entity.Property(e => e.AdminId).HasColumnName("admin_id");
+
+                // STRICT: Cannot delete Admin if logs exist
                 entity.HasOne(d => d.Admin).WithMany(p => p.AdminLogs)
                     .HasForeignKey(d => d.AdminId)
+                    .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("fk_admin_logs_admin");
             });
 
+            // --- DRUG ENTITY ---
             modelBuilder.Entity<Drug>(entity =>
             {
                 entity.HasKey(e => e.DrugId).HasName("PK__drugs__73F2330CA7F8E910");
@@ -80,37 +82,30 @@ namespace Pharmacy.Data
                 entity.Property(e => e.SubAmountQuantity).HasColumnName("sub_amount_quantity");
             });
 
-            // --- CRITICAL FIX: Explicit DrugTag Join Entity Configuration ---
+            // --- DRUG TAG (JOIN TABLE) ---
             modelBuilder.Entity<DrugTag>(entity =>
             {
-                // 1. Map to the correct table name
                 entity.ToTable("drug_tags");
-
-                // 2. Define the composite primary key
                 entity.HasKey(dt => new { dt.DrugId, dt.TagId }).HasName("PK__drug_tag__07DB5927FFBD29C7");
+                entity.Property(dt => dt.DrugId).HasColumnName("drug_id"); 
+                entity.Property(dt => dt.TagId).HasColumnName("tag_id");
 
-                // 3. Foreign Key: DrugTag -> Drug
+                // STRICT: Must delete join entry before deleting Drug
                 entity.HasOne(dt => dt.Drug)
                     .WithMany(d => d.DrugTags)
                     .HasForeignKey(dt => dt.DrugId)
-                    .HasConstraintName("fk_dt_drug")
-                    .OnDelete(DeleteBehavior.Cascade);
-                
-                // IMPORTANT: Force mapping to snake_case column
-                entity.Property(dt => dt.DrugId).HasColumnName("drug_id"); 
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasConstraintName("fk_dt_drug");
 
-                // 4. Foreign Key: DrugTag -> Tag
+                // STRICT: Must delete join entry before deleting Tag
                 entity.HasOne(dt => dt.Tag)
                     .WithMany(t => t.DrugTags)
                     .HasForeignKey(dt => dt.TagId)
-                    .HasConstraintName("fk_dt_tag")
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                // IMPORTANT: Force mapping to snake_case column
-                entity.Property(dt => dt.TagId).HasColumnName("tag_id");
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasConstraintName("fk_dt_tag");
             });
-            // ----------------------------------------------------------------
 
+            // --- INVOICE ENTITY ---
             modelBuilder.Entity<Invoice>(entity =>
             {
                 entity.HasKey(e => e.InvoiceId).HasName("PK__invoices__F58DFD4921BD016E");
@@ -123,12 +118,15 @@ namespace Pharmacy.Data
                 entity.Property(e => e.TaxAmount).HasColumnType("decimal(18, 2)").HasColumnName("tax_amount");
                 entity.Property(e => e.AmountPaid).HasColumnType("decimal(18, 2)").HasColumnName("amount_paid");
                 entity.Property(e => e.TotalAmount).HasColumnType("decimal(18, 2)").HasColumnName("total_amount");
+
+                // STRICT: Cannot delete Admin if they have Invoices
                 entity.HasOne(d => d.Admin).WithMany(p => p.Invoices)
                     .HasForeignKey(d => d.AdminId)
-                    .OnDelete(DeleteBehavior.SetNull)
+                    .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("fk_invoice_admin");
             });
 
+            // --- INVOICE ITEM ENTITY ---
             modelBuilder.Entity<InvoiceItem>(entity =>
             {
                 entity.HasKey(e => e.ItemId).HasName("PK__invoice___52020FDDA3592531");
@@ -137,14 +135,21 @@ namespace Pharmacy.Data
                 entity.Property(e => e.DrugId).HasColumnName("drug_id");
                 entity.Property(e => e.InvoiceId).HasColumnName("invoice_id");
                 entity.Property(e => e.Quantity).HasColumnName("quantity");
+
+                // STRICT: Cannot delete Drug if it exists in an Invoice
                 entity.HasOne(d => d.Drug).WithMany(p => p.InvoiceItems)
                     .HasForeignKey(d => d.DrugId)
+                    .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("fk_ii_drug");
+
+                // STRICT: Cannot delete Invoice if it has items
                 entity.HasOne(d => d.Invoice).WithMany(p => p.InvoiceItems)
                     .HasForeignKey(d => d.InvoiceId)
+                    .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("fk_ii_invoice");
             });
 
+            // --- TAG ENTITY ---
             modelBuilder.Entity<Tag>(entity =>
             {
                 entity.HasKey(e => e.TagId).HasName("PK__tags__4296A2B656706952");

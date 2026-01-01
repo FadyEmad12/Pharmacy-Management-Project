@@ -53,7 +53,7 @@ namespace Pharmacy.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         public async Task<IActionResult> AddDrug([FromForm] DrugCreateDto dto)
         {
             if (!ModelState.IsValid)
@@ -102,7 +102,7 @@ namespace Pharmacy.Controllers
 
 
         // PUT: api/drugs/5
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateDrug(int id, [FromBody] DrugUpdateDto dto)
         {
@@ -118,7 +118,7 @@ namespace Pharmacy.Controllers
         }
 
         // DELETE: api/drugs/5
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -130,7 +130,7 @@ namespace Pharmacy.Controllers
             return Ok(new { success = true, message = "Drug Deleted successfully" });
         }
 
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         [HttpGet("generate-barcode")]
         public async Task<IActionResult> GenerateBarcode()
         {

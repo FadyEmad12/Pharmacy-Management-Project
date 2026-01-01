@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pharmacy.Data;
 using Pharmacy.Dtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Pharmacy.Controllers
 {
@@ -17,7 +18,7 @@ namespace Pharmacy.Controllers
         }
 
         [HttpGet("cards")]
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         public async Task<IActionResult> GetDashboardCards()
         {
             var now = DateTime.UtcNow;
@@ -63,7 +64,7 @@ namespace Pharmacy.Controllers
         }
 
         [HttpGet("low-stock")]
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         public async Task<IActionResult> GetLowStockDrugs()
         {
             var lowStockDrugs = await _context.Drugs
@@ -81,7 +82,7 @@ namespace Pharmacy.Controllers
 
 
         [HttpGet("most-sold")]
-        [Authorize(Roles = "super_admin")]
+        [Authorize]
         public async Task<IActionResult> GetMostSoldDrugsLastMonth()
         {
             var fromDate = DateTime.UtcNow.AddMonths(-1);
