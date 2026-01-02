@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine</title>
+    <!-- Bootstrap css link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- all css link -->
+    <link rel="stylesheet" href="../Css/All.css">
+    <!-- Sidebar CSS link -->
+    <link rel="stylesheet" href="../Side bar/css/style.css">
+    <!-- Custom css link -->
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <div class="row vh-100 m-0">
+        <!-- Sidebar -->
+        <div id="sidebar-placeholder" class="col-lg-2 col-0 p-0">
+        </div>
+
+        <!-- Main content -->
+        <div class="col-lg-10 col-12" id="main-content">
+            <div class="container">
+                <h2 class="my-4 text-center fw-bold">Medicine</h2>
+                <div class="d-flex my-3 justify-content-between mb-4">
+                    <form class="d-flex">
+                        <input class="search form-control me-2" type="search" placeholder="Search user" aria-label="Search">
+                        <button class="search-btn btn" type="submit">Search</button>
+                    </form>
+                    <a href="#"
+                        class="add-btn btn"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addMedicineModal">
+                        Add Medicine
+                    </a>
+                </div>
+                <div class="table-wrapper">
+                    <table class="table table-bordered">
+                        <thead class="table-head">
+                            <tr>
+                                <th scope="col">Barcode</th>
+                                <th scope="col">Medicine name</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Add Medicine Modal -->
+<div class="modal fade" id="addMedicineModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Medicine</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Medicine Name</label>
+                        <input type="text" class="form-control" id="medicineName" placeholder="Enter item name">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Barcode</label>
+                        <input type="text" class="form-control" id="barcode" placeholder="Enter barcode">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Manufacturer</label>
+                        <input type="text" class="form-control" id="manufacturer" placeholder="Enter manufacturer">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Drug Type</label>
+                        <select class="form-select" id="drugType">
+                            <option selected disabled>Select drug type</option>
+                            <option>Tablet</option>
+                            <option>Syrup</option>
+                            <option>Injection</option>
+                            <option>Capsule</option>
+                            <option>Cream</option>
+                            <option>Gel</option>
+                            <option>Spray</option>
+                            <option>Drops</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Expiration Date</label>
+                        <input type="date" class="form-control" id="expirationDate">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Drug Image</label>
+                        <input type="file" id="medicineImage" class="form-control" />
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Purchasing Price</label>
+                            <input type="number" class="form-control" id="purchasingPrice" placeholder="Enter purchasing price">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Selling Price</label>
+                            <input type="number" class="form-control" id="sellingPrice" placeholder="Enter selling price">
+                        </div>
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="requiresPrescription">
+                        <label class="form-check-label" for="requiresPrescription">Requires Prescription</label>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Shelf Amount</label>
+                            <input type="number" class="form-control" id="shelfAmount" placeholder="Shelf amount">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Stored Amount</label>
+                            <input type="number" class="form-control" id="storedAmount" placeholder="Stored amount">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Low Amount</label>
+                            <input type="number" class="form-control" id="lowAmount" placeholder="Low amount">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Sub Amount Quantity</label>
+                        <input type="number" class="form-control" id="subAmountQuantity" placeholder="Enter sub amount quantity">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description Before Use</label>
+                        <textarea class="form-control" id="descriptionBeforeUse" rows="2"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">How To Use</label>
+                        <textarea class="form-control" id="descriptionHowToUse" rows="2"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Side Effects</label>
+                        <textarea class="form-control" id="descriptionSideEffects" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-success">Save Medicine</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Medicine Modal -->
+<div class="modal fade" id="editMedicineModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Medicine</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label class="form-label">Medicine Name</label>
+                        <input type="text" class="form-control" id="editMedicineName">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Barcode</label>
+                        <input type="text" class="form-control" id="editBarcode">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Manufacturer</label>
+                        <input type="text" class="form-control" id="editManufacturer">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Drug Type</label>
+                        <select class="form-select" id="editDrugType">
+                            <option selected disabled>Select drug type</option>
+                            <option>Tablet</option>
+                            <option>Syrup</option>
+                            <option>Injection</option>
+                            <option>Capsule</option>
+                            <option>Cream</option>
+                            <option>Gel</option>
+                            <option>Spray</option>
+                            <option>Drops</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Expiration Date</label>
+                        <input type="date" class="form-control" id="editExpirationDate">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Purchasing Price</label>
+                            <input type="number" class="form-control" id="editPurchasingPrice">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Selling Price</label>
+                            <input type="number" class="form-control" id="editSellingPrice">
+                        </div>
+                    </div>
+
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="editRequiresPrescription">
+                        <label class="form-check-label" for="editRequiresPrescription">Requires Prescription</label>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Shelf Amount</label>
+                            <input type="number" class="form-control" id="editShelfAmount">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Stored Amount</label>
+                            <input type="number" class="form-control" id="editStoredAmount">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Low Amount</label>
+                            <input type="number" class="form-control" id="editLowAmount">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Sub Amount Quantity</label>
+                        <input type="number" class="form-control" id="editSubAmountQuantity">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description Before Use</label>
+                        <textarea class="form-control" id="editDescriptionBeforeUse" rows="2"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">How To Use</label>
+                        <textarea class="form-control" id="editDescriptionHowToUse" rows="2"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Side Effects</label>
+                        <textarea class="form-control" id="editDescriptionSideEffects" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-success">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Sidebar fetch script -->
+    <script>
+        fetch("../Side bar/index.html")
+        .then(response => response.text())
+        .then(data => document.getElementById("sidebar-placeholder").innerHTML = data);
+    </script>
+
+    <!-- Bootstrap js link -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- js link -->
+    <script src="./js/main.js"></script>
+    <!-- sidebar js -->
+    <script src="../Side bar/js/main.js"></script>
+</body>
+</html>

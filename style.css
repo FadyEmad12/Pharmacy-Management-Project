@@ -1,0 +1,84 @@
+/* body {
+    background: linear-gradient(to right, #294899, #4DB79C);
+    min-height: 100vh;
+}
+.card {
+    width: 600px;
+} */
+
+body {
+    background: linear-gradient(to right, #294899, #4DB79C);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.img-wrapper {
+    /* background: rgba(255, 255, 255, 0.6);  */
+    padding: 10px; 
+    border-radius: 50px; 
+}
+img{
+    width: 270px;
+    height: auto;
+    margin-bottom: 1rem;
+    object-fit: contain;
+}
+.card {
+    width: 100%;
+    max-width: 400px;
+    padding: 2rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+input.form-control {
+    border-radius: 50px;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+input.form-control::placeholder {
+    color: #f0f0f0;
+}
+input.form-control:focus::placeholder {
+    color: black;
+}
+input.form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(5px);
+    border: none;
+}
+
+button.login-btn, 
+button.signUp-btn {
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+button.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+button.signUp-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .card {
+        padding: 1.5rem;
+        margin: 0 1rem;
+    }
+}
+@media (max-width: 400px) {
+    button.login-btn, 
+    button.signUp-btn {
+        width: 100%;
+        padding: 0.75rem;
+    }
+}

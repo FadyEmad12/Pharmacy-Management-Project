@@ -1,0 +1,103 @@
+body{
+    height: 100vh;
+}
+
+.sidebar-fixed .logout-btn {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 16px;
+    width: calc(100% - 40px);
+
+    color: white;
+
+    font-size: 1.1rem;
+    text-decoration: none;
+    border-radius: 10px;
+
+    transition: all 0.3s ease;
+}
+.sidebar-fixed .logout-btn:hover {
+    background-color: #C62828;
+    color: #fff;
+}
+.sidebar-fixed .logout-btn i {
+  opacity: 0.8;
+}
+.sidebar-fixed .logout-btn:hover i {
+  opacity: 1;
+}
+
+/* Desktop Sidebar */
+.sidebar-fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: inherit; 
+    color: #FFFFFF;
+    background-color: #0F4C5C;
+    overflow: hidden;
+    /* position: relative; */
+}
+.sidebar-fixed ul li a {
+    align-items: center;
+    color: #fff;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 1.5rem !important;
+    transition: all 0.3s ease-in-out;
+}
+.sidebar-fixed ul li a:hover {
+    background-color: #09343F;
+}
+@media (max-width: 1200px) {
+    .sidebar-fixed ul li a {
+        font-size: 1.2rem !important;
+    }
+}
+.sidebar-fixed ul li a span {
+    margin-left: 10px;
+}
+.sidebar-content {
+    position: relative;
+    height: 100%;
+}
+/* Mobile Sidebar */
+
+.offcanvas-body ul li a {
+    align-items: center;
+    color: #000;
+    text-decoration: none;
+    padding: 15px 15px;
+    transition: all 0.3s ease-in-out;
+}
+.offcanvas-body ul li a:hover {
+    color: darkblue;
+}
+.offcanvas-body .logout-btn {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: flex !important;
+    align-items: center;
+    gap: 10px !important;
+    margin: 20px;
+    padding: 10px 15px !important;
+    color: white !important;
+    font-size: 1.2rem !important;
+    border-radius: 10px;
+    width: 84% !important;
+    background-color: #E63946 !important;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out !important;
+}
+.offcanvas-body .logout-btn:hover {
+    background-color: #C62828 !important;
+}

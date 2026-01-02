@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidebar</title>
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- all css link -->
+    <link rel="stylesheet" href="../Css/All.css">
+    <!-- Bootstrap link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS link -->
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <!-- Side bar -->
+        <!-- Mobile Toggle Button -->
+        <div class="d-lg-none p-3">
+            <button class="btn btn-light" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                <i class="fa-solid open-close-icon fa-2x fa-align-justify"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Offcanvas Sidebar -->
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileSidebar">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title fs-1">Hello, <span class="adminName"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="list-unstyled d-flex flex-column gap-3 fs-4">
+                    <li>
+                        <a href="#" >
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" >
+                            <span>Medicines</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" >
+                            <span>Admin</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" >
+                            <span>Invoices</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" >
+                            <span>Cashier</span>
+                        </a>
+                    </li>
+                </ul>
+                <a href="" class="logout-btn">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="row position-relative">
+            <!-- Desktop Sidebar -->
+            <div class="col-lg-2 d-none d-lg-block p-0">
+                <div class="sidebar-fixed">
+                    <div class="sidebar-content">
+                        <h3 class="m-4 fs-5">Hello, <span class="adminName"></span></h3>
+                        <ul class="list-unstyled p-3 d-flex flex-column gap-5 align-items-center mt-5">
+                            <li class="w-100"><a href="#" class="d-block w-100 px-xl-2 py-2">
+                                <i class="fa-solid fa-house"></i>
+                                <span>Dashboard</span>
+                            </a></li>
+                            <li class="w-100"><a href="#" class="d-block w-100 px-xl-2 py-2">
+                                <i class="fa-solid fa-pills"></i>
+                                <span>Medicines</span>
+                            </a></li>
+                            <li class="w-100"><a href="#" class="d-block w-100 px-xl-2 py-2">
+                                <i class="fa-solid fa-user"></i>
+                                <span>Admin</span>
+                            </a></li>
+                            <li class="w-100"><a href="#" class="d-block w-100 px-xl-2 py-2">
+                                <i class="fa-solid fa-receipt"></i>
+                                <span>Invoices</span>
+                            </a></li>
+                            <li class="w-100"><a href="#" class="d-block w-100 px-xl-2 py-2">
+                                <i class="fa-solid fa-cash-register"></i>
+                                <span>Cashier</span>
+                            </a></li>
+                        </ul>
+                        <a href="" class="logout-btn btn">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Bootstrap js link -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom js link -->
+    <script src="./js/main.js"></script>
+</body>
+</html>

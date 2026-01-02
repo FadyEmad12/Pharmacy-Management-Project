@@ -1,0 +1,62 @@
+body {
+    background-color: #F3FAFA;
+}
+
+.dashboard-content {
+    min-height: 100vh;
+}
+
+.dashboard-card {
+    height: 170px;
+    border-radius: 12px;
+    border: 0.7px solid #e0e0e0;
+    transition: all 0.3s ease-in-out;
+}
+.dashboard-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+.dashboard-card .card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+/* Bottom Section */
+.card-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #ffffff;
+    border: none;
+    padding: 15px 20px;
+}
+.list-item {
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+.list-item:hover {
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+.list-item .list-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #E63946;
+}
+@media (min-width: 992px) {
+    .lowStock-card {
+        max-height: 425px;
+        overflow-y: auto;
+    }
+    .bestSelling-card{
+    height: 425px;
+}
+}

@@ -1,0 +1,148 @@
+img {
+    width: 100%;
+    display: block;
+}
+.sec-pd {
+    padding-block: 5.25rem;
+}
+h2 {
+    margin-bottom: 2rem;
+    font-size: 3.5rem;
+}
+
+/* Header section */
+header {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url(../imgs/pharmacy-drugstore-white-blur-abstract-blue-background-medical-chemists-blurred-defocused-background_926199-498824.avif);;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: scroll;
+}
+h1 {
+    font-size: 4rem;
+}
+.bounce-btn {
+    width: 30px;
+    height: 50px;
+    border: 2px solid white;
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+}
+.bounce-btn::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: white;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 8px;
+}
+/* Categories section */
+/* Category Card */
+#categories .caregory {
+    border-radius: 1.8rem;
+    box-shadow: 0 0 15px rgba(57, 171, 143, 0.2);
+    background: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#categories .caregory:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(57, 171, 143, 0.25);
+}
+
+/* Image */
+#categories .img-wrapper {
+    max-width: 120px;
+    margin-inline: auto;
+}
+
+#categories .img-wrapper img {
+    width: 100%;
+    object-fit: contain;
+}
+
+/* Button */
+#categories .text-wrapper a {
+    padding: 0.5rem 1.2rem;
+    background-color: #39AB8F;
+}
+
+#categories .icon-wrapper {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    transition: transform 0.4s ease;
+}
+
+#categories .icon-wrapper img {
+    width: 14px;
+}
+
+#categories .text-wrapper a:hover .icon-wrapper {
+    transform: translateX(10px);
+}
+
+@media (min-width: 990px) and (max-width: 1199.98px) {
+    #categories .caregory {
+        flex-direction: column !important;
+        text-align: center;
+    }
+
+    #categories .img-wrapper {
+        max-width: 140px;
+        margin-inline: auto;
+    }
+
+    #categories .text-wrapper a {
+        margin-inline: auto;
+    }
+}
+
+@media (max-width: 767.98px) {
+    h2 {
+        font-size: 2.4rem;
+    }
+    #categories .caregory {
+        text-align: center;
+    }
+
+    #categories .text-wrapper a {
+        margin-inline: auto;
+    }
+    #services .text-wrapper {
+        width: 100% !important;
+    }
+}
+
+
+/* Contact section */
+
+#contact .contact-info .icon-wrapper img{
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+/* Footer */
+
+footer {
+    background: linear-gradient(to right, #294899, #4DB79C);
+}
+footer .social-icons img {
+    width: 30px;
+    height: 30px;
+    color: white;
+    transition: all 0.5s ease;
+}
+footer .social-icons img:hover {
+    transform: scale(1.2);
+}

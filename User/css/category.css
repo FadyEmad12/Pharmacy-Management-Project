@@ -1,0 +1,72 @@
+#baby-sec, #drugs-sec, #products-sec{
+    background-color:rgb(226, 222, 222);
+}
+.items-hero{
+    padding-top:20px;
+}
+.items-hero .container{
+    border-bottom:1px solid rgb(180, 177, 177);
+    padding-bottom:20px;
+}
+.items-hero-card{
+    background-color:rgb(255, 255, 255);
+    width:280px;
+    height:220px;
+    border-radius:30px;
+}
+.items-hero-card img{
+    width:100px;
+}
+.items-hero-card h3{
+    margin-top:20px;
+}
+.items-btn-input{
+    background-color:rgb(255, 255, 255) !important;
+    margin-top:20px;
+    width:480px;
+    display:flex;
+    justify-content:center;
+    border-radius:40px;
+    height:40px;
+    overflow: hidden !important;
+    border:none !important;
+}
+.search-input{
+    overflow: hidden !important;
+    border:none !important;
+}
+.search-input:focus{
+    overflow: hidden !important;
+    border:none !important;
+    outline: none !important;
+}
+.input-group-text{
+    overflow: hidden !important;
+    border:none !important;
+    background-color:rgb(255, 255, 255) !important;
+}
+.items-galary .container{
+    border-bottom:1px solid rgb(180, 177, 177);
+    padding-bottom:25px;
+}
+.items-card .card{
+    min-height:230px;
+}
+.items-card a .card{
+    border-radius:20px !important;
+}
+.items-card a{
+    text-decoration:none !important;
+}
+.items-card img{
+    width:100px;
+    height:110px;
+    padding-top:12px;
+}
+.items-card .card-body{
+    padding-top:25px;
+}
+.items-card h5{
+    font-size:14px;
+    font-weight:500 !important;
+}

@@ -1,0 +1,19 @@
+/* Font link */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root{
+    --dark-blue:#0635C9;
+    --aqua-blue:#04D3A9;
+    --blue-text:#111F59;
+    --bg-color:#F3FAFA;
+    --add-btn : #2A9D8F;
+    --add-btn-hover : #21867A;
+    --table-head :#DCEFF1;
+    --edit-btn : #4DB6AC;
+    --edit-btn-hover : #3FA69B;
+    --delete-btn : #E63946;
+    --delete-btn-hover : #C62828;
+}
+*{
+    font-family: "Roboto", sans-serif;
+}
