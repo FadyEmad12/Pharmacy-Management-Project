@@ -32,4 +32,6 @@ To check the Project Very Well follow the following steps PDF by PDF:
 
 6- Open User Manual (PDF) Then Powerpoint as a breif (PPT) OR (PDF) as you like.
 
+7- You can check the Real system By Reading the Document (How to Check Our Project (Real System).). 
+
 Thank you So much for your Interesting and Attention with us.
